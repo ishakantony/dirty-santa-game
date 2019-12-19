@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>ACN Christmas Games 2019</title>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/css/main.css" />
+  </head>
+  <body>
+    <div id="loading" class="d-none justify-content-center align-items-center">
+      <div class="w-100 d-flex justify-content-center">
+        <div
+          class="spinner-border text-light"
+          role="status"
+          style="width: 5rem; height: 5rem"
+        >
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+    </div>
+    <section id="adminArea">
+      <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <div
+          class="btn-group btn-group-sm text-white"
+          role="group"
+          aria-label="Basic example"
+        >
+          Administrator
+        </div>
+        <div class="collapse navbar-collapse" id="navbarCollapse"></div>
+      </nav>
+      <div class="container mt-3">
+        <div class="row text-center">
+          <div class="col-sm-12 col-md-4">
+            <div class="card shadow p-5 mb-3">
+              <a
+                class="btn btn-fix"
+                href="#"
+                data-toggle="modal"
+                data-target="#userList"
+              >
+                <h2 class="card-title">Users</h2>
+                <p class="card-text">
+                  View or modify all users here
+                </p>
+              </a>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-4">
+            <div class="card shadow p-5 mb-3">
+              <a
+                class="btn btn-fix"
+                href="#"
+                data-toggle="modal"
+                data-target="#challengeList"
+              >
+                <h2 class="card-title">Challenges</h2>
+                <p class="card-text">
+                  Add or Remove Challenge from here
+                </p>
+              </a>
+            </div>
+          </div>
+          <div class="col-sm-12 col-md-4">
+            <div class="card shadow p-5 mb-3">
+              <a
+                id="seeGiftButton"
+                class="btn btn-fix"
+                href="#"
+                data-toggle="modal"
+                data-target="#giftListModal"
+              >
+                <h2 class="card-title">Gifts</h2>
+                <p class="card-text">
+                  See gifts
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card shadow p-5 mb-3 text-center">
+          <a href="#" class="btn btn-fix start"><h1>Start Game</h1></a>
+        </div>
+        <div class="card shadow p-5 mb-3 text-center">
+          <a href="#" class="btn btn-fix reset"><h1>Reset Game</h1></a>
+        </div>
+      </div>
+    </section>
+    <!-- User List Modal -->
+    <div
+      class="modal fade"
+      id="userList"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="userListLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1000px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="userListLabel">Online Users</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="overflow-auto" style="height:50vh">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">EID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="userListArea"></tbody>
+              </table>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col">
+                <input
+                  type="text"
+                  placeholder="Enter new joiner eid"
+                  class="form-control"
+                  id="newUserEid"
+                  autofocus
+                />
+              </div>
+              <div class="col">
+                <input
+                  type="text"
+                  placeholder="Enter new joiner name"
+                  class="form-control"
+                  id="newUserName"
+                  autofocus
+                />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary mx-auto user">
+              Add New User
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Challenge List Modal -->
+    <div
+      class="modal fade"
+      id="challengeList"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="challengeListLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="challengeListLabel">Challenge List</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ul id="challengeListArea" class="list-group"></ul>
+            <br />
+            <input
+              type="text"
+              placeholder="Enter new challenge"
+              class="form-control"
+              id="newChallenge"
+              autofocus
+            />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger mx-auto add">
+              Add Challenge
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Gift List Modal -->
+    <div
+      class="modal fade"
+      id="giftListModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="giftListModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1000px">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="giftListModalLabel">Gift List</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="overflow-auto" style="height:50vh">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Gift</th>
+                    <th scope="col">Original Owner</th>
+                    <th scope="col">Current Owner</th>
+                    <th scope="col">Steal Count</th>
+                  </tr>
+                </thead>
+                <tbody id="giftListModalArea"></tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">
+              OKAY
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Game Start Modal -->
+    <div
+      class="modal fade"
+      id="gameStartModal"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="gameStartModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="gameStartModalLabel">Game Status</h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="gameStartModalArea"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary mx-auto add"
+              data-dismiss="modal"
+            >
+              OKAY
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/admin.js"></script>
+  </body>
+</html>

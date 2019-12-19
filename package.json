@@ -1,0 +1,23 @@
+{
+  "name": "acn-christmas-games-2019",
+  "version": "1.0.0",
+  "description": "Simple games app for gift exchange event",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon server"
+  },
+  "author": "Ishak Antony Darmawan",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "convert-excel-to-json": "^1.6.1",
+    "exceljs": "^3.5.0",
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0",
+    "xlsx-to-json": "^0.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.1"
+  }
+}

@@ -1,0 +1,26 @@
+#chatContainer {
+  height: 60vh;
+  overflow-y: scroll;
+}
+
+#giftBox {
+  width: 29px;
+  height: 29px;
+  margin-right: 6px;
+  margin-top: -2px;
+}
+
+li.d-flex:hover {
+  zoom: normal;
+}
+
+#loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  cursor: pointer;
+}
