@@ -38,12 +38,11 @@ var refreshGiftList = () => {
   });
 
   resetReq.done(data => {
-    var html;
-
-    for( const [i, item] of data.entries() ) {
-      html+= `
+    var html = '';
+    for (const [i, item] of data.entries()) {
+      html += `
         <tr>
-          <td>${i+1}</td>
+          <td>${i + 1}</td>
           <td>${item.gift}</td>
           <td>${item.originalOwnerName}</td>
           <td>${item.ownerName}</td>
@@ -54,7 +53,7 @@ var refreshGiftList = () => {
 
     $giftListModalArea.html(html);
   });
-}
+};
 
 var getUserList = function() {
   var userListRequest = $.ajax({
@@ -65,11 +64,18 @@ var getUserList = function() {
 
   userListRequest.done(data => {
     var html = '';
-    var users = data.users;
+    var users = data.users.sort((a, b) => {
+      if (a.loggedIn && !b.loggedIn) {
+        return -1;
+      } else if (!a.loggedIn && b.loggedIn) {
+        return 1;
+      }
+      return 0;
+    });
     for (const [i, user] of users.entries()) {
       var status;
       if (user.loggedIn) {
-        status = '<span class="text-success">online</span>';
+        status = '<h5 class="text-success font-weight-bold">online</h5>';
       } else {
         status = '<span class="text-danger">offline</span>';
       }
@@ -247,7 +253,6 @@ $resetGameButton.on('click', e => {
 
   resetReq.done(data => {
     var html = `<h1 class="text-center text-danger my-5">${data.message}</h1>`;
-
     $gameStartModalArea.html(html);
     $gameStartModal.modal('show');
   });
@@ -261,7 +266,7 @@ $seeGiftButton.on('click', e => {
   e.preventDefault();
 
   refreshGiftList();
-})
+});
 
 $(document).ready(function() {
   getUserList();

@@ -1,627 +1,450 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>ACN Christmas Games 2019</title>
 
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-      crossorigin="anonymous"
-    />
-    <link rel="stylesheet" href="/css/main.css" />
-  </head>
-  <body>
-    <div id="loading" class="d-none justify-content-center align-items-center">
-      <div class="w-100 d-flex justify-content-center">
-        <div
-          class="spinner-border text-light"
-          role="status"
-          style="width: 5rem; height: 5rem"
-        >
-          <span class="sr-only">Loading...</span>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>ACN Christmas Games 2019</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/css/main.css" />
+</head>
+
+<body>
+  <div id="loading" class="d-none justify-content-center align-items-center">
+    <div class="w-100 d-flex justify-content-center">
+      <div class="spinner-border text-light" role="status" style="width: 5rem; height: 5rem">
+        <span class="sr-only">Loading...</span>
       </div>
     </div>
-    <section id="loginArea">
-      <div class="container">
-        <div class="row vh-100 align-items-center justify-content-center">
-          <div class="col-10">
-            <form id="loginForm">
-              <div id="wrongUsernameFormatAlert"></div>
-              <div class="row border p-3 align-items-center">
-                <div class="col-md-10 col-sm-12">
-                  <div class="form-group">
-                    <label for="username">Enter username:</label>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="username"
-                      autofocus
-                    />
-                  </div>
-                </div>
-                <div class="col-md-2 col-sm-12">
-                  <input
-                    type="submit"
-                    class="btn btn-primary btn-block mt-md-3 mt-sm-0"
-                    value="Enter Room"
-                  />
-                </div>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section id="mainArea" class="d-none">
-      <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
-        <!-- <div
-          class="btn-group btn-group-sm"
-          role="group"
-          aria-label="Basic example"
-        >
-          <button
-            id="myTurnButton"
-            type="button"
-            class="btn btn-primary navbar-brand"
-            data-toggle="modal"
-            data-target="#turnModal"
-          >
-            My Turn
-          </button>
-        </div> -->
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarCollapse"
-          aria-controls="navbarCollapse"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarCollapse">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://www.linkedin.com/in/ishakantony"
-                target="_blank"
-                >Author - Ishak Antony Darmawan<span class="sr-only"
-                  >(current)</span
-                ></a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://www.linkedin.com/in/hau-cherng-wong-121ab5149/"
-                target="_blank"
-                >Author - Wong Hau Cherng<span class="sr-only"
-                  >(current)</span
-                ></a
-              >
-            </li>
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                href="https://www.linkedin.com/in/kee-ken-ong-294348173/"
-                target="_blank"
-                >Author - Ong Kee Ken<span class="sr-only">(current)</span></a
-              >
-            </li>
-          </ul>
-        </div>
-      </nav>
-      <div class="container mt-3">
-        <h1 class="text-center">Chat</h1>
-        <div class="container">
-          <div id="chatContainer" class="row border px-3 py-2">
-            <div id="chatMessageArea" class="col-12"></div>
-            <div id="typingIndicatorArea" class="col-12 align-self-end d-none">
-              <div class="row my-3">
-                <div id="typingPlaceholder" class="col-auto p-2">
-                  <strong id="">Someone </strong> is typing...
-                </div>
-              </div>
-            </div>
-          </div>
-          <form id="messageForm">
+  </div>
+  <section id="loginArea">
+    <div class="container">
+      <div class="row vh-100 align-items-center justify-content-center">
+        <div class="col-10">
+          <form id="loginForm">
+            <div id="wrongUsernameFormatAlert"></div>
             <div class="row border p-3 align-items-center">
               <div class="col-md-10 col-sm-12">
                 <div class="form-group">
-                  <label for="message">Enter message:</label>
-                  <input type="text" class="form-control" id="message" />
+                  <label for="username">Enter username:</label>
+                  <input type="text" class="form-control" id="username" autofocus />
                 </div>
               </div>
               <div class="col-md-2 col-sm-12">
-                <input
-                  type="submit"
-                  class="btn btn-primary btn-block mt-md-3 mt-sm-0"
-                  value="Send"
-                />
+                <input type="submit" class="btn btn-primary btn-block mt-md-3 mt-sm-0" value="Enter Room" />
               </div>
             </div>
           </form>
         </div>
       </div>
-    </section>
-    <!-- Turn Announcement Modal -->
-    <div
-      class="modal fade"
-      id="turnAnnouncementModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="turnAnnouncementModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="turnAnnouncementModalLabel">Turn</h5>
+    </div>
+  </section>
+  <section id="mainArea" class="d-none">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+      <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+        <button id="rulesButton" type="button" class="btn btn-primary navbar-brand" data-toggle="modal"
+          data-target="#ruleList">
+          Rules
+        </button>
+      </div>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/ishakantony" target="_blank">Author - Ishak Antony
+              Darmawan<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/hau-cherng-wong-121ab5149/" target="_blank">Author -
+              Wong Hau Cherng<span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://www.linkedin.com/in/kee-ken-ong-294348173/" target="_blank">Author - Ong
+              Kee Ken<span class="sr-only">(current)</span></a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <div class="container mt-3">
+      <h1 class="text-center">Chat</h1>
+      <div class="container">
+        <div id="chatContainer" class="row border px-3 py-2">
+          <div id="chatMessageArea" class="col-12"></div>
+          <div id="typingIndicatorArea" class="col-12 align-self-end d-none">
+            <div class="row my-3">
+              <div id="typingPlaceholder" class="col-auto p-2">
+                <strong id="">Someone </strong> is typing...
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
-            <div id="turnAnnouncementModalArea"></div>
+        </div>
+        <form id="messageForm">
+          <div class="row border p-3 align-items-center">
+            <div class="col-md-10 col-sm-12">
+              <div class="form-group">
+                <label for="message">Enter message:</label>
+                <input type="text" class="form-control" id="message" />
+              </div>
+            </div>
+            <div class="col-md-2 col-sm-12">
+              <input type="submit" class="btn btn-primary btn-block mt-md-3 mt-sm-0" value="Send" />
+            </div>
           </div>
-          <div class="modal-footer">
-            <button
-              id="turnAnnouncementModalButton"
-              type="button"
-              class="btn btn-primary mx-auto"
-              data-dismiss="modal"
-            >
-              OKAY
-            </button>
-          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  <!-- Turn Announcement Modal -->
+  <div class="modal fade" id="turnAnnouncementModal" tabindex="-1" role="dialog"
+    aria-labelledby="turnAnnouncementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="turnAnnouncementModalLabel">Turn</h5>
+        </div>
+        <div class="modal-body">
+          <div id="turnAnnouncementModalArea"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="turnAnnouncementModalButton" type="button" class="btn btn-primary mx-auto" data-dismiss="modal">
+            OKAY
+          </button>
         </div>
       </div>
     </div>
-    <!-- Rules Modal -->
-    <div
-      class="modal fade"
-      id="ruleList"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="ruleListLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="ruleListLabel">Room Rules</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+  </div>
+  <!-- Rules Modal -->
+  <div class="modal fade" id="ruleList" tabindex="-1" role="dialog" aria-labelledby="ruleListLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ruleListLabel">Room Rules</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="ruleListArea" class="bg-light text-center overflow-auto" style="height: 50vh;">
+            <h3>Hi fellow colleagues</h3>
+            <p>Wish you have a happy xmas celebration tonight.</p>
+            <p>
+              We will be playing Dirty Santa, remember the rules to gain an
+              advantage!
+            </p>
+            <h5>Instructions:</h5>
+            <p>If It is your turn, you will have 2 options:</p>
+            <p class="p-3">
+              - Choose your victim<br />- Draw a challenge in the challenge
+              list.<br />
+              - win the challenge to steal the gift. (If you lose, you must
+              pick a gift.)<br />- 1 gift can only be stolen for 3 times.<br />-
+              Pick a gift from the gift pool and announce what gift u had. If
+              your gift is stolen, be patient and wait for your turn to steal.
+            </p>
           </div>
-          <div class="modal-body">
-            <ul id="ruleListArea" class="list-group">
-              <li></li>
-              <li></li>
-              <li></li>
-            </ul>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary mx-auto"
-              data-dismiss="modal"
-            >
-              Got it!
-            </button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary mx-auto" data-dismiss="modal">
+            Got it!
+          </button>
         </div>
       </div>
     </div>
-    <!-- Turn Modal -->
-    <div
-      class="modal fade"
-      id="turnModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="turnModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title text-center" id="turnModalLabel">
-              Select Your Move
-            </h5>
-          </div>
-          <div class="modal-body">
-            <div class="row">
-              <div class="col-6">
-                <button
-                  type="submit"
-                  class="btn btn-primary w-100"
-                  data-toggle="modal"
-                  data-target="#giftModal"
-                >
-                  Pick <img class="w-100" src="/img/unwrap.svg" />
-                </button>
-              </div>
-              <div class="col-6">
-                <button
-                  id="stealButton"
-                  type="submit"
-                  class="btn btn-danger w-100"
-                >
-                  Steal <img class="w-100" src="/img/grinch.svg" />
-                </button>
-              </div>
+  </div>
+  <!-- Turn Modal -->
+  <div class="modal fade" id="turnModal" tabindex="-1" role="dialog" aria-labelledby="turnModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center" id="turnModalLabel">
+            Select Your Move
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-6">
+              <button type="submit" class="btn btn-primary w-100" data-toggle="modal" data-target="#giftModal">
+                Pick <img class="w-100" src="/img/unwrap.svg" />
+              </button>
+            </div>
+            <div class="col-6">
+              <button id="stealButton" type="submit" class="btn btn-danger w-100">
+                Steal <img class="w-100" src="/img/grinch.svg" />
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Gift Modal -->
-    <div
-      class="modal fade"
-      id="giftModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="giftModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title text-center" id="giftModalLabel">
-              What did you get?
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form id="giftForm">
-              <div class="row align-items-center">
-                <div class="col-sm-12">
-                  <div class="form-group">
-                    <label for="gift">Enter gift:</label>
-                    <input type="text" class="form-control" id="gift" />
-                  </div>
-                </div>
-                <div class="col-sm-12">
-                  <input
-                    type="submit"
-                    class="btn btn-primary btn-block mt-md-3 mt-sm-0"
-                    value="Announce My Gift"
-                  />
-                </div>
-              </div>
-            </form>
-          </div>
+  </div>
+  <!-- Gift Modal -->
+  <div class="modal fade" id="giftModal" tabindex="-1" role="dialog" aria-labelledby="giftModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-center" id="giftModalLabel">
+            What did you get?
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
-      </div>
-    </div>
-    <!-- Steal Modal -->
-    <div
-      class="modal fade"
-      id="stealModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="stealModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="stealModalLabel">
-              Select Gift to Steal
-            </h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <ul id="stealModalArea" class="list-group"></ul>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Challenge Modal -->
-    <div
-      class="modal fade"
-      id="challengeModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="challengeModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="challengeModalLabel">
-              Do you accept this challenge?
-            </h5>
-          </div>
-          <div class="modal-body">
+        <div class="modal-body">
+          <form id="giftForm">
             <div class="row align-items-center">
               <div class="col-sm-12">
-                <div class="row justify-content-center">
-                  <h4 id="challengePlaceholder"></h4>
+                <div class="form-group">
+                  <label for="gift">Enter gift:</label>
+                  <input type="text" class="form-control" id="gift" />
                 </div>
               </div>
               <div class="col-sm-12">
-                <div class="row justify-content-around mt-4">
-                  <button
-                    id="challengeAcceptButton"
-                    class="btn btn-success mt-md-3 mt-sm-0"
-                  >
-                    Accept
-                  </button>
-                  <button
-                    class="btn btn-warning mt-md-3 mt-sm-0"
-                    data-dismiss="modal"
-                  >
-                    Reject
-                  </button>
-                </div>
+                <input type="submit" class="btn btn-primary btn-block mt-md-3 mt-sm-0" value="Announce My Gift" />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Steal Modal -->
+  <div class="modal fade" id="stealModal" tabindex="-1" role="dialog" aria-labelledby="stealModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="stealModalLabel">
+            Select Gift to Steal
+          </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <ul id="stealModalArea" class="list-group"></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Challenge Modal -->
+  <div class="modal fade" id="challengeModal" tabindex="-1" role="dialog" aria-labelledby="challengeModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="challengeModalLabel">
+            Do you accept this challenge?
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div class="row align-items-center">
+            <div class="col-sm-12">
+              <div class="row justify-content-center">
+                <h4 id="challengePlaceholder"></h4>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="row justify-content-around mt-4">
+                <button id="challengeAcceptButton" class="btn btn-success mt-md-3 mt-sm-0">
+                  Accept
+                </button>
+                <button class="btn btn-warning mt-md-3 mt-sm-0" data-dismiss="modal">
+                  Reject
+                </button>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- Click Game Modal -->
-    <div
-      class="modal fade"
-      id="clickGameModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="clickGameModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="clickGameModalLabel">Click Game</h5>
+  </div>
+  <!-- Click Game Modal -->
+  <div class="modal fade" id="clickGameModal" tabindex="-1" role="dialog" aria-labelledby="clickGameModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="clickGameModalLabel">Click Game</h5>
+        </div>
+        <div class="modal-body">
+          <div id="clickGameModalArea">
+            <p>
+              Player with the most clicks win!
+              <strong>Click button to start</strong>
+            </p>
+            <h1 id="clickGameCountdown" class="text-center font-weight-bold" style="font-size:5rem">
+              5
+            </h1>
+            <div class="row mt-5">
+              <div class="col-12">
+                <button id="clickGameStartButton" class="btn btn-primary btn-lg btn-block" data-count="0"
+                  style="height:10rem">
+                  Click Me!
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
-            <div id="clickGameModalArea">
-              <p>
-                Player with the most clicks win!
-                <strong>Click button to start</strong>
-              </p>
-              <h1
-                id="clickGameCountdown"
-                class="text-center font-weight-bold"
-                style="font-size:5rem"
-              >
-                5
-              </h1>
-              <div class="row mt-5">
-                <div class="col-12">
-                  <button
-                    id="clickGameStartButton"
-                    class="btn btn-primary btn-lg btn-block"
-                    data-count="0"
-                    style="height:10rem"
-                  >
-                    Click Me!
-                  </button>
-                </div>
+          <div id="clickGameWaiting" class="d-none">
+            <div class="d-flex justify-content-center my-3">
+              <div class="spinner-border" role="status" style="width:5rem;height:5rem">
+                <span class="sr-only">Loading...</span>
               </div>
             </div>
-            <div id="clickGameWaiting" class="d-none">
-              <div class="d-flex justify-content-center my-3">
-                <div
-                  class="spinner-border"
-                  role="status"
-                  style="width:5rem;height:5rem"
-                >
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <h4 class="text-center">Waiting for enemy to finish</h4>
-            </div>
-            <div id="clickGameCalculating" class="d-none">
-              <div class="d-flex justify-content-center my-3">
-                <div
-                  class="spinner-border"
-                  role="status"
-                  style="width:5rem;height:5rem"
-                >
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <h4 class="text-center">Calculating score...</h4>
-            </div>
-            <div id="clickGameResult" class="d-none"></div>
+            <h4 class="text-center">Waiting for enemy to finish</h4>
           </div>
+          <div id="clickGameCalculating" class="d-none">
+            <div class="d-flex justify-content-center my-3">
+              <div class="spinner-border" role="status" style="width:5rem;height:5rem">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <h4 class="text-center">Calculating score...</h4>
+          </div>
+          <div id="clickGameResult" class="d-none"></div>
         </div>
       </div>
     </div>
-    <!-- Direction Game Modal -->
-    <div
-      class="modal fade"
-      id="directionGameModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="directionGameModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="directionGameModalLabel">
-              Direction Game
-            </h5>
+  </div>
+  <!-- Direction Game Modal -->
+  <div class="modal fade" id="directionGameModal" tabindex="-1" role="dialog" aria-labelledby="directionGameModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="directionGameModalLabel">
+            Direction Game
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div id="directionGameModalArea">
+            <p>
+              Player with the most correct answers win!
+              <strong>Click button to start</strong>
+            </p>
+            <h2 id="directionGameCountdown" class="text-center font-weight-bold" style="font-size:2rem">
+              5
+            </h2>
+            <h2 id="directionGameIndicator" class="text-center font-weight-bold" style="font-size:3rem">
+              Left or Right?
+            </h2>
+            <div class="row mt-5">
+              <input type="hidden" id="directionGameCounter" data-count="0" />
+              <div class="col-6">
+                <button id="directionGameLeftButton" class="btn btn-primary btn-lg btn-block" data-count="0"
+                  style="height:5rem">
+                  Left
+                </button>
+              </div>
+              <div class="col-6">
+                <button id="directionGameRightButton" class="btn btn-primary btn-lg btn-block" data-count="0"
+                  style="height:5rem">
+                  Right
+                </button>
+              </div>
+            </div>
           </div>
-          <div class="modal-body">
-            <div id="directionGameModalArea">
-              <p>
-                Player with the most correct answers win!
-                <strong>Click button to start</strong>
-              </p>
-              <h2
-                id="directionGameCountdown"
-                class="text-center font-weight-bold"
-                style="font-size:2rem"
-              >
-                5
-              </h2>
-              <h2
-                id="directionGameIndicator"
-                class="text-center font-weight-bold"
-                style="font-size:3rem"
-              >
-                Left or Right?
-              </h2>
-              <div class="row mt-5">
-                <input type="hidden" id="directionGameCounter" data-count="0" />
-                <div class="col-6">
-                  <button
-                    id="directionGameLeftButton"
-                    class="btn btn-primary btn-lg btn-block"
-                    data-count="0"
-                    style="height:5rem"
-                  >
-                    Left
-                  </button>
-                </div>
-                <div class="col-6">
-                  <button
-                    id="directionGameRightButton"
-                    class="btn btn-primary btn-lg btn-block"
-                    data-count="0"
-                    style="height:5rem"
-                  >
-                    Right
-                  </button>
-                </div>
+          <div id="directionGameWaiting" class="d-none">
+            <div class="d-flex justify-content-center my-3">
+              <div class="spinner-border" role="status" style="width:5rem;height:5rem">
+                <span class="sr-only">Loading...</span>
               </div>
             </div>
-            <div id="directionGameWaiting" class="d-none">
-              <div class="d-flex justify-content-center my-3">
-                <div
-                  class="spinner-border"
-                  role="status"
-                  style="width:5rem;height:5rem"
-                >
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <h4 class="text-center">Waiting for enemy to finish</h4>
-            </div>
-            <div id="directionGameCalculating" class="d-none">
-              <div class="d-flex justify-content-center my-3">
-                <div
-                  class="spinner-border"
-                  role="status"
-                  style="width:5rem;height:5rem"
-                >
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <h4 class="text-center">Calculating score...</h4>
-            </div>
-            <div id="directionGameResult" class="d-none"></div>
+            <h4 class="text-center">Waiting for enemy to finish</h4>
           </div>
+          <div id="directionGameCalculating" class="d-none">
+            <div class="d-flex justify-content-center my-3">
+              <div class="spinner-border" role="status" style="width:5rem;height:5rem">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <h4 class="text-center">Calculating score...</h4>
+          </div>
+          <div id="directionGameResult" class="d-none"></div>
         </div>
       </div>
     </div>
-    <!-- Custom Game Modal -->
-    <div
-      class="modal fade"
-      id="customGameModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="customGameModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="customGameModalLabel">
-              Who won the challenge?
-            </h5>
+  </div>
+  <!-- Custom Game Modal -->
+  <div class="modal fade" id="customGameModal" tabindex="-1" role="dialog" aria-labelledby="customGameModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="customGameModalLabel">
+            Who won the challenge?
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div id="customGameWaiting" class="d-none">
+            <div class="d-flex justify-content-center my-3">
+              <div class="spinner-border" role="status" style="width:5rem;height:5rem">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <h4 class="text-center">Waiting for opponent to finish</h4>
           </div>
-          <div class="modal-body">
-            <div id="customGameWaiting" class="d-none">
-              <div class="d-flex justify-content-center my-3">
-                <div
-                  class="spinner-border"
-                  role="status"
-                  style="width:5rem;height:5rem"
-                >
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <h4 class="text-center">Waiting for opponent to finish</h4>
-            </div>
-            <div id="customGamePlaying" class="row align-items-center">
-              <div class="col-sm-12">
-                <div class="row justify-content-around">
-                  <button
-                    id="iWonButton"
-                    class="btn btn-success mt-md-3 mt-sm-0"
-                  >
-                    I am
-                  </button>
-                  <button
-                    id="myOpponentWonButton"
-                    class="btn btn-warning mt-md-3 mt-sm-0"
-                  >
-                    My Opponent
-                  </button>
-                </div>
+          <div id="customGamePlaying" class="row align-items-center">
+            <div class="col-sm-12">
+              <div class="row justify-content-around">
+                <button id="iWonButton" class="btn btn-success mt-md-3 mt-sm-0">
+                  I am
+                </button>
+                <button id="myOpponentWonButton" class="btn btn-warning mt-md-3 mt-sm-0">
+                  My Opponent
+                </button>
               </div>
             </div>
-            <div id="customGameCalculating" class="d-none">
-              <div class="d-flex justify-content-center my-3">
-                <div
-                  class="spinner-border"
-                  role="status"
-                  style="width:5rem;height:5rem"
-                >
-                  <span class="sr-only">Loading...</span>
-                </div>
-              </div>
-              <h4 class="text-center">Calculating score...</h4>
-            </div>
-            <div id="customGameResult" class="d-none"></div>
           </div>
+          <div id="customGameCalculating" class="d-none">
+            <div class="d-flex justify-content-center my-3">
+              <div class="spinner-border" role="status" style="width:5rem;height:5rem">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+            <h4 class="text-center">Calculating score...</h4>
+          </div>
+          <div id="customGameResult" class="d-none"></div>
         </div>
       </div>
     </div>
-    <script
-      src="https://code.jquery.com/jquery-3.4.1.min.js"
-      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-      integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-      crossorigin="anonymous"
-    ></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/index.js"></script>
-  </body>
+  </div>
+  <!-- Game Info Modal -->
+  <div class="modal fade" id="gameInfoModal" tabindex="-1" role="dialog" aria-labelledby="gameInfoModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="gameInfoModalLabel">Game Info</h5>
+        </div>
+        <div class="modal-body">
+          <div id="gameInfoModalArea"></div>
+        </div>
+        <div class="modal-footer">
+          <button id="gameInfoModalButton" type="button" class="btn btn-primary mx-auto" data-dismiss="modal">
+            OKAY
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/index.js"></script>
+</body>
+
 </html>

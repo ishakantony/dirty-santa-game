@@ -48,6 +48,8 @@ var $customGameWaiting = $('#customGameWaiting');
 var $customGamePlaying = $('#customGamePlaying');
 var $customGameCalculating = $('#customGameCalculating');
 var $customGameResult = $('#customGameResult');
+var $gameInfoModal = $('#gameInfoModal');
+var $gameInfoModalArea = $('#gameInfoModalArea');
 var $loading = $('#loading');
 var tempChallenge = null;
 var game = {
@@ -58,12 +60,14 @@ var game = {
   player: {
     id: '',
     name: '',
+    username: '',
     count: 0,
     finished: false
   },
   enemy: {
     id: '',
     name: '',
+    username: '',
     count: 0,
     finished: false
   }
@@ -155,11 +159,11 @@ var writeUserKickedOut = function(username) {
   $chatContainer.scrollTop($chatContainer.prop('scrollHeight'));
 };
 
-var writeNewUserEnter = function(username) {
+var writeNewUserEnter = function(name) {
   var html = `
         <div class="row my-3">
             <div class="col-auto border p-2 bg-light font-italic">
-                <strong>${username}</strong> entered the chat room.
+                <strong>${name}</strong> entered the chat room.
             </div>
         </div>
     `;
@@ -181,11 +185,11 @@ var writeOwnUserEnter = function() {
   $chatContainer.scrollTop($chatContainer.prop('scrollHeight'));
 };
 
-var writeMessageFromOther = function(username, message) {
+var writeMessageFromOther = function(name, message) {
   var html = `
         <div class="row my-3">
             <div class="col-auto border p-2 bg-light">
-                <strong>${username}: </strong>${message}
+                <strong>${name}: </strong>${message}
             </div>
         </div>
     `;
@@ -200,6 +204,20 @@ var writeSomeoneGotAGift = function(data) {
             <div class="col-auto border p-2 bg-light">
                 <h5 class="text-danger font-weight-bold">System Announcement</h5>
                 <p><strong>${data.ownerName}</strong> has gotten: <img id="giftBox" src="/img/giftbox.svg"/><strong>${data.gift}</strong></p>
+            </div>
+        </div>
+    `;
+
+  $chatMessageArea.append(html);
+  $chatContainer.scrollTop($chatContainer.prop('scrollHeight'));
+};
+
+var writeGameHasBeenReset = function() {
+  var html = `
+        <div class="row my-3">
+            <div class="col-auto border p-2 bg-light">
+                <h5 class="text-danger font-weight-bold">System Announcement</h5>
+                <p><strong>Game</strong> has been <strong>reset.</strong> Please wait...</p>
             </div>
         </div>
     `;
@@ -287,6 +305,7 @@ var showWinnerOfClickGame = function(clickGame) {
           oldOwnerId: clickGame.giftOwnerId,
           newOwnerId: clickGame.player.id,
           newOwnerName: clickGame.player.name,
+          newOwnerUserName: clickGame.player.username,
           enemyOwnerId: clickGame.enemy.id
         };
 
@@ -308,6 +327,7 @@ var showWinnerOfClickGame = function(clickGame) {
         oldOwnerId: clickGame.giftOwnerId,
         newOwnerId: clickGame.player.id,
         newOwnerName: clickGame.player.name,
+        newOwnerUserName: clickGame.player.username,
         enemyOwnerId: clickGame.enemy.id
       };
 
@@ -356,6 +376,7 @@ var showWinnerOfCustomGame = function(clickGame) {
         oldOwnerId: clickGame.giftOwnerId,
         newOwnerId: clickGame.player.id,
         newOwnerName: clickGame.player.name,
+        newOwnerUserName: clickGame.player.username,
         enemyOwnerId: clickGame.enemy.id
       };
 
@@ -468,6 +489,7 @@ var showWinnerOfDirectionGame = function(directionGame) {
           oldOwnerId: directionGame.giftOwnerId,
           newOwnerId: directionGame.player.id,
           newOwnerName: directionGame.player.name,
+          newOwnerUserName: directionGame.player.username,
           enemyOwnerId: directionGame.enemy.id
         };
 
@@ -489,6 +511,7 @@ var showWinnerOfDirectionGame = function(directionGame) {
         oldOwnerId: directionGame.giftOwnerId,
         newOwnerId: directionGame.player.id,
         newOwnerName: directionGame.player.name,
+        newOwnerUserName: directionGame.player.username,
         enemyOwnerId: directionGame.enemy.id
       };
 
@@ -619,6 +642,55 @@ var endTurn = function(challenge) {
   resetGame();
 };
 
+var startDirectionGame = function() {
+  var totalCount = game.totalCount;
+  var countdown = setInterval(() => {
+    $directionGameCountdown.html(totalCount);
+    totalCount--;
+    if (totalCount < 0) {
+      clearInterval(countdown);
+
+      $directionGameRightButton.addClass('disabled');
+      $directionGameRightButton.attr('disabled', true);
+      $directionGameLeftButton.addClass('disabled');
+      $directionGameLeftButton.attr('disabled', true);
+
+      game.player.finished = true;
+
+      var data = {
+        count: game.player.count,
+        recipient: game.enemy.id
+      };
+
+      socket.emit('i am finish', data);
+
+      switchDirectionGameState('waiting');
+      if (game.player.finished && game.enemy.finished) {
+        showWinnerOfDirectionGame(game);
+      }
+    }
+  }, 1000);
+};
+
+var randomizeLeftRight = function() {
+  if (Math.floor(Math.random() * 100) % 2) {
+    $directionGameIndicator.html('Left');
+  } else {
+    $directionGameIndicator.html('Right');
+  }
+};
+
+var closeAllModals = function() {
+  $turnAnnouncementModal.modal('hide');
+  $turnModal.modal('hide');
+  $giftModal.modal('hide');
+  $stealModal.modal('hide');
+  $challengeModal.modal('hide');
+  $clickGameModal.modal('hide');
+  $directionGameModal.modal('hide');
+  $customGameModal.modal('hide');
+}
+
 var startSpinner = function() {
   $loading.removeClass('d-none');
   $loading.addClass('d-flex');
@@ -636,7 +708,7 @@ socket.on('new message', data => {
   if (data.username === socket.username) {
     writeMessageFromSelf(data.message);
   } else {
-    writeMessageFromOther(data.username, data.message);
+    writeMessageFromOther(data.name, data.message);
   }
 });
 
@@ -644,7 +716,7 @@ socket.on('new user enter', data => {
   if (data.socketId === socket.id) {
     writeOwnUserEnter();
   } else {
-    writeNewUserEnter(data.username);
+    writeNewUserEnter(data.name);
   }
 });
 
@@ -689,12 +761,12 @@ socket.on('user list updated', data => {
 socket.on('someone is typing', data => {
   if (data.length === 0) {
     $typingIndicatorArea.addClass('d-none');
-  } else if (data.length === 1 && data[0] === socket.username) {
+  } else if (data.length === 1 && data[0] === socket.name) {
     $typingIndicatorArea.addClass('d-none');
   } else {
     var tempData = data;
-    if (data.length > 1 && data.indexOf(socket.username) > -1) {
-      tempData.splice(data.indexOf(socket.username), 1);
+    if (data.length > 1 && data.indexOf(socket.name) > -1) {
+      tempData.splice(data.indexOf(socket.name), 1);
     }
     var names;
     var html;
@@ -748,9 +820,11 @@ socket.on('someone challenge me', data => {
   game.gift = data.gift;
   game.giftOwnerId = data.ownerId;
   game.player.id = socket.id;
-  game.player.name = socket.username;
+  game.player.username = socket.username;
+  game.player.name = socket.name;
   game.enemy.id = data.challengerId;
-  game.enemy.name = data.challengerUsername;
+  game.enemy.username = data.challengerUsername;
+  game.enemy.name = data.challengerName;
 
   if (data.challenge === 'Click Game') {
     switchClickGameState('playing');
@@ -791,10 +865,12 @@ socket.on('enemy finished', data => {
           challenge: game.challenge,
           gift: game.gift,
           player: {
+            username: game.player.username,
             name: game.player.name,
             count: game.player.count
           },
           enemy: {
+            username: game.enemy.username,
             name: game.enemy.name,
             count: game.enemy.count
           }
@@ -821,29 +897,6 @@ socket.on('enemy finished', data => {
         }, 3000);
       }
     }
-  }
-});
-
-socket.on('enemy finished direction', data => {
-  directionGame.enemy.finished = true;
-  directionGame.enemy.count = data.count;
-  if (directionGame.player.finished && directionGame.enemy.finished) {
-    showWinnerOfDirectionGame(directionGame);
-    setTimeout(() => {
-      var request = {
-        challenge: directionGame.challenge,
-        gift: directionGame.gift,
-        player: {
-          name: directionGame.player.name,
-          count: directionGame.player.count
-        },
-        enemy: {
-          name: directionGame.enemy.name,
-          count: directionGame.enemy.count
-        }
-      };
-      socket.emit('battle is over', request);
-    }, 3000);
   }
 });
 
@@ -890,9 +943,31 @@ socket.on('next turn', data => {
   }
 });
 
-socket.on('game stopped', data => {
-  window.location.reload();
-})
+socket.on('handshake', data => {
+  console.log(socket.id);
+  if (socket.loggedIn) {
+    var request = {
+      username: socket.username,
+      name: socket.name
+    };
+
+    socket.emit('handshake success', request);
+  }
+});
+
+socket.on('game has been reset', data => {
+  var html = `
+    <h5 class="text-center">Game has been reset by Administrator</h5>
+    <p class="text-center">Please wait..</p>
+  `;
+
+  resetGame();
+  closeAllModals();
+  
+  $gameInfoModalArea.html(html);
+  $gameInfoModal.modal('show');
+  writeGameHasBeenReset();
+});
 
 // LISTENERS
 $messageForm.on('submit', e => {
@@ -902,6 +977,7 @@ $messageForm.on('submit', e => {
 
   var data = {
     username: socket.username,
+    name: socket.name,
     message: $message.val()
   };
 
@@ -936,6 +1012,7 @@ $loginForm.on('submit', e => {
         }
       } else {
         socket.username = data.username;
+        socket.name = data.name;
         $username.val('');
         $loginArea.addClass('d-none');
         $mainArea.removeClass('d-none');
@@ -944,8 +1021,10 @@ $loginForm.on('submit', e => {
         socket.loggedIn = true;
         socket.emit('login success', {
           socketId: socket.id,
-          username: socket.username
+          username: socket.username,
+          name: socket.name
         });
+        $('#ruleList').modal('show');
       }
     });
 
@@ -964,7 +1043,7 @@ $giftForm.on('submit', e => {
   if ($gift.val() == '') return;
 
   var data = {
-    originalOwnerName: socket.username,
+    originalOwnerName: socket.name,
     gift: $gift.val()
   };
 
@@ -1008,7 +1087,7 @@ $stealButton.on('click', e => {
                             <p>${item.gift}</p>
                         </div>
                         <div class="col-3">
-                            <button class="btn btn-sm btn-danger w-100 steal" data-gift="${item.gift}" data-owner-id="${item.ownerId}" data-owner-name="${item.ownerName}">Steal</button>
+                            <button class="btn btn-sm btn-danger w-100 steal" data-gift="${item.gift}" data-owner-id="${item.ownerId}" data-owner-name="${item.ownerName}" data-owner-username="${item.ownerUserName}">Steal</button>
                         </div>
                     </div>
                 </li>
@@ -1067,6 +1146,7 @@ $challengeAcceptButton.on('click', e => {
 
   var challenge = $this.data('challenge');
   var gift = $this.data('gift');
+  var ownerUserName = $this.data('owner-username');
   var ownerName = $this.data('owner-name');
   var ownerId = $this.data('owner-id');
 
@@ -1074,9 +1154,11 @@ $challengeAcceptButton.on('click', e => {
   game.gift = gift;
   game.giftOwnerId = ownerId;
   game.player.id = socket.id;
-  game.player.name = socket.username;
+  game.player.name = socket.name;
+  game.player.username = socket.username;
   game.enemy.id = ownerId;
   game.enemy.name = ownerName;
+  game.enemy.username = ownerUserName;
 
   var data = {
     challenge: challenge,
@@ -1084,7 +1166,8 @@ $challengeAcceptButton.on('click', e => {
     ownerName: ownerName,
     ownerId: ownerId,
     challengerId: socket.id,
-    challengerUsername: socket.username
+    challengerUsername: socket.username,
+    challengerName: socket.name
   };
 
   socket.emit('i challenge you', data);
@@ -1155,44 +1238,6 @@ $clickGameStartButton.on('click', e => {
     $clickGameStartButton.data('count', count);
   }
 });
-
-var startDirectionGame = function() {
-  var totalCount = game.totalCount;
-  var countdown = setInterval(() => {
-    $directionGameCountdown.html(totalCount);
-    totalCount--;
-    if (totalCount < 0) {
-      clearInterval(countdown);
-
-      $directionGameRightButton.addClass('disabled');
-      $directionGameRightButton.attr('disabled', true);
-      $directionGameLeftButton.addClass('disabled');
-      $directionGameLeftButton.attr('disabled', true);
-
-      game.player.finished = true;
-
-      var data = {
-        count: game.player.count,
-        recipient: game.enemy.id
-      };
-
-      socket.emit('i am finish', data);
-
-      switchDirectionGameState('waiting');
-      if (game.player.finished && game.enemy.finished) {
-        showWinnerOfDirectionGame(game);
-      }
-    }
-  }, 1000);
-};
-
-var randomizeLeftRight = function() {
-  if (Math.floor(Math.random() * 100) % 2) {
-    $directionGameIndicator.html('Left');
-  } else {
-    $directionGameIndicator.html('Right');
-  }
-};
 
 $directionGameLeftButton.on('click', e => {
   e.preventDefault();

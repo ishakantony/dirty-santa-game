@@ -31,11 +31,11 @@ users = excelToJson({
   }
 }).nameList;
 
-// console.log(connections);
+console.log(connections);
 // convert nameList.xlsx to json END
 
 server.listen(PORT);
-// console.log(`Server started on port ${PORT}`);
+console.log(`Server started on port ${PORT}`);
 
 // EXPRESS APIS
 app.use(express.static(path.join(__dirname, 'assets')));
@@ -69,7 +69,7 @@ app.get('/api/challenge', (req, res) => {
 
 app.post('/api/challenge', (req, res) => {
   var newChallenge = req.body.challenge;
-  // console.log(newChallenge);
+  console.log(newChallenge);
   challenges.push(newChallenge);
   res.json({
     result: 'New Challenge Added : ' + newChallenge
@@ -78,12 +78,12 @@ app.post('/api/challenge', (req, res) => {
 
 app.delete('/api/challenge', (req, res) => {
   var delChallenge = req.body.challenge;
-  // console.log(`Removing challenge: ${delChallenge}...`);
+  console.log(`Removing challenge: ${delChallenge}...`);
   challenges.splice(challenges.indexOf(delChallenge), 1);
   res.json({
     result: 'Challenge Removed : ' + delChallenge
   });
-  // console.log(`Challenge Removed : ${delChallenge}`);
+  console.log(`Challenge Removed : ${delChallenge}`);
 });
 
 app.get('/api/gift', (req, res) => {
@@ -108,13 +108,13 @@ app.post('/api/login', (req, res) => {
   });
 
   if (user === undefined) {
-    // console.log(`Invalid username: ${username}`);
+    console.log(`Invalid username: ${username}`);
     res.json({
       loggedIn: false,
       message: 'Wrong username'
     });
   } else if (user.loggedIn == true) {
-    // console.log(`User already logged in: ${username}`);
+    console.log(`User already logged in: ${username}`);
     res.json({
       loggedIn: false,
       message: 'User already logged in'
@@ -130,11 +130,12 @@ app.post('/api/login', (req, res) => {
 
     turns.push(socketId);
     io.sockets.emit('user list updated', users);
-    // console.log('User logged in:', user);
+    console.log('User logged in:', user);
     res.json({
       loggedIn: true,
       message: 'Login success',
-      username: user.Name
+      username: user.EID,
+      name: user.Name
     });
   }
 });
@@ -156,13 +157,30 @@ app.post('/api/user', (req, res) => {
 });
 
 app.post('/api/game/stop', (req, res) => {
-  unlimitedTurns = [];
-  io.sockets.emit('game stopped');
+  if(!gameStarted) {
+    res.json({
+      stopped: false,
+      message: 'Error on stopping game as game is not started yet'
+    });
+    return;
+  }
+
   gameStarted = false;
+  unlimitedTurns = [];
+  turns = [];
+  gifts = [];
+  users.forEach(user => {
+    if (user.loggedIn) {
+      turns.push(user.socketId);
+    }
+  });
+
+  console.log(gameStarted, unlimitedTurns, turns, gifts);
   res.json({
     stopped: true,
-    message: 'Game stopped successfully'
+    message: 'Game has been reset'
   });
+  io.sockets.emit('game has been reset');
 });
 
 app.get('/api/game/start', (req, res) => {
@@ -198,7 +216,61 @@ app.get('/api/game/start', (req, res) => {
 io.sockets.on('connection', socket => {
   socket.loggedIn = false;
   connections.push(socket);
-  // console.log(`Connected: ${connections.length} sockets connected`);
+  console.log(`Connected: ${connections.length} sockets connected`);
+
+  socket.emit('handshake');
+  socket.on('handshake success', ({ username, name }) => {
+    socket.username = username;
+    socket.name = name;
+    socket.loggedIn = true;
+
+    const user = users.find(user => user.EID === username);
+    const userIndex = users.indexOf(user);
+
+    user.loggedIn = true;
+    user.socketId = socket.id;
+    users[userIndex] = user;
+
+    turns.push(socket.id);
+
+    const gift = gifts.find(gift => gift.ownerUserName === socket.username);
+
+    if (gift !== undefined) {
+      const giftIndex = gifts.indexOf(gift);
+      gift.ownerId = socket.id;
+      gifts[giftIndex] = gift;
+      console.log(gift);
+    }
+
+    console.log(
+      `Handshake Success: ID:${socket.id}, USERNAME:${socket.username}, LOGGEDIN:${socket.loggedIn}`
+    );
+  });
+
+  socket.on('login success', ({ socketId, username, name }) => {
+    socket.username = username;
+    socket.name = name;
+    socket.loggedIn = true;
+
+    const gift = gifts.find(gift => gift.ownerUserName === socket.username);
+
+    if (gift !== undefined) {
+      const giftIndex = gifts.indexOf(gift);
+      gift.ownerId = socket.id;
+      gifts[giftIndex] = gift;
+      console.log(gift);
+    }
+
+    console.log(
+      `Login Success: ID:${socket.id}, USERNAME:${socket.username}, LOGGEDIN:${socket.loggedIn}`
+    );
+
+    io.sockets.emit('new user enter', {
+      username: username,
+      socketId: socketId,
+      name: name
+    });
+  });
 
   socket.on('disconnect', data => {
     if (socket.loggedIn) {
@@ -207,27 +279,13 @@ io.sockets.on('connection', socket => {
       users[
         users.findIndex(user => user.socketId === socket.id)
       ].loggedIn = false;
-      io.sockets.emit('user disconnected', socket.username);
+      io.sockets.emit('user disconnected', socket.name);
     }
-    typingUsers.splice(typingUsers.indexOf(socket.username), 1);
+    typingUsers.splice(typingUsers.indexOf(socket.name), 1);
     connections.splice(connections.indexOf(socket), 1);
-    gifts = gifts.filter(gift => {
-      return gift.ownerId !== socket.id;
-    });
-    // console.log(users);
-    // console.log(`Disconnected: ${connections.length} sockets connected`);
+    console.log(`Disconnected: ${connections.length} sockets connected`);
 
     io.sockets.emit('someone is typing', typingUsers);
-  });
-
-  socket.on('login success', ({ socketId, username }) => {
-    socket.username = username;
-    socket.loggedIn = true;
-
-    io.sockets.emit('new user enter', {
-      username: username,
-      socketId: socketId
-    });
   });
 
   socket.on('end turn', data => {
@@ -259,14 +317,14 @@ io.sockets.on('connection', socket => {
   });
 
   socket.on('i am typing', data => {
-    if (typingUsers.indexOf(socket.username) === -1) {
-      typingUsers.push(socket.username);
+    if (typingUsers.indexOf(socket.name) === -1) {
+      typingUsers.push(socket.name);
     }
     io.sockets.emit('someone is typing', typingUsers);
   });
 
   socket.on('i am not typing', data => {
-    typingUsers.splice(typingUsers.indexOf(socket.username), 1);
+    typingUsers.splice(typingUsers.indexOf(socket.name), 1);
     io.sockets.emit('someone is typing', typingUsers);
   });
 
@@ -274,13 +332,14 @@ io.sockets.on('connection', socket => {
     var gift = data;
 
     gift.ownerId = socket.id;
-    gift.ownerName = socket.username;
+    gift.ownerUserName = socket.username;
+    gift.ownerName = socket.name;
     gift.stealCount = 0;
 
     gifts.push(gift);
 
-    // console.log('New gift registered:', gift);
-    // console.log(`Current total gifts: ${gifts.length} items`);
+    console.log('New gift registered:', gift);
+    console.log(`Current total gifts: ${gifts.length} items`);
 
     socket.emit('gift registered', data);
     socket.broadcast.emit('someone got a gift', data);
@@ -313,21 +372,22 @@ io.sockets.on('connection', socket => {
   });
 
   socket.on('i have stolen a gift', data => {
-    // console.log('i have stolen a gift', data);
+    console.log('i have stolen a gift', data);
     var gift = gifts.find(item => {
       return item.ownerId == data.oldOwnerId;
     });
 
     gifts.splice(gifts.indexOf(gift), 1);
-    // console.log('Gift removed:', gift);
+    console.log('Gift removed:', gift);
 
     gift.ownerId = data.newOwnerId;
     gift.ownerName = data.newOwnerName;
+    gift.ownerUserName = data.newOwnerUserName;
     gift.stealCount++;
 
     gifts.push(gift);
-    // console.log('Gift added:', gift);
-    // console.log('Gifts :', gifts);
+    console.log('Gift added:', gift);
+    console.log('Gifts :', gifts);
     if (unlimitedTurns.indexOf(data.newOwnerId) > -1) {
       unlimitedTurns.splice(unlimitedTurns.indexOf(data.newOwnerId), 1);
     }
