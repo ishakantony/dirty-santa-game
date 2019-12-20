@@ -16,6 +16,8 @@ var $refreshBtn = $('button.refresh');
 var $seeGiftButton = $('#seeGiftButton');
 var $giftListModal = $('#giftListModal');
 var $giftListModalArea = $('#giftListModalArea');
+var $notificationArea = $('#notificationArea');
+var $gameStatus = $('#gameStatus');
 var $loading = $('#loading');
 // SOCKETS
 var socket = io.connect();
@@ -39,23 +41,32 @@ var refreshGiftList = () => {
 
   resetReq.done(data => {
     var html = '';
-    for (const [i, item] of data.entries()) {
-      html += `
+
+    if(data.length === 0) {
+      html = `
         <tr>
-          <td>${i + 1}</td>
-          <td>${item.gift}</td>
-          <td>${item.originalOwnerName}</td>
-          <td>${item.ownerName}</td>
-          <td>${item.stealCount}</td>
+          <td colspan="5"><p class="text-center font-weight-bold">No Gift(s)</p></td>
         </tr>
       `;
+    } else {
+      for (const [i, item] of data.entries()) {
+        html += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${item.gift}</td>
+            <td>${item.originalOwnerName}</td>
+            <td>${item.ownerName}</td>
+            <td>${item.stealCount}</td>
+          </tr>
+        `;
+      }
     }
 
     $giftListModalArea.html(html);
   });
 };
 
-var getUserList = function() {
+var refreshUserList = function() {
   var userListRequest = $.ajax({
     url: '/api/user',
     method: 'GET',
@@ -227,15 +238,25 @@ $startGameButton.on('click', e => {
 
   request.done(data => {
     endSpinner();
-    var html;
     if (data.started) {
-      html = `<h1 class="text-center text-success my-5">${data.message}</h1>`;
-    } else {
-      html = `<h1 class="text-center text-danger my-5">${data.message}</h1>`;
-    }
+      var html = `
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <strong>${data.message}</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      `;
+      $notificationArea.html(html);
 
-    $gameStartModalArea.html(html);
-    $gameStartModal.modal('show');
+      $gameStatus.removeClass('text-danger');
+      $gameStatus.addClass('text-success');
+      $gameStatus.html('Started');
+    } else {
+      $gameStatus.addClass('text-danger');
+      $gameStatus.removeClass('text-success');
+      $gameStatus.html('Stopped');
+    }
   });
 
   request.fail((jqXHR, textStatus) => {
@@ -252,14 +273,24 @@ $resetGameButton.on('click', e => {
   });
 
   resetReq.done(data => {
-    var html = `<h1 class="text-center text-danger my-5">${data.message}</h1>`;
-    $gameStartModalArea.html(html);
-    $gameStartModal.modal('show');
+    var html = `
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <strong>${data.message}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    `;
+    $notificationArea.html(html);
+
+    $gameStatus.addClass('text-danger');
+    $gameStatus.removeClass('text-success');
+    $gameStatus.html('Stopped');
   });
 });
 
 $refreshBtn.on('click', e => {
-  getUserList();
+  refreshUserList();
 });
 
 $seeGiftButton.on('click', e => {
@@ -269,9 +300,9 @@ $seeGiftButton.on('click', e => {
 });
 
 $(document).ready(function() {
-  getUserList();
+  refreshUserList();
 
   setInterval(refreshGiftList, 2000);
 
-  setInterval(getUserList, 2000);
+  setInterval(refreshUserList, 2000);
 });

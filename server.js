@@ -245,6 +245,11 @@ io.sockets.on('connection', socket => {
     console.log(
       `Handshake Success: ID:${socket.id}, USERNAME:${socket.username}, LOGGEDIN:${socket.loggedIn}`
     );
+    io.sockets.emit('new user enter', {
+      username: socket.username,
+      socketId: socket.id,
+      name: socket.name
+    });
   });
 
   socket.on('login success', ({ socketId, username, name }) => {

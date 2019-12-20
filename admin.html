@@ -37,216 +37,116 @@
         </div>
         <div class="collapse navbar-collapse" id="navbarCollapse"></div>
       </nav>
-      <div class="container mt-3">
-        <div class="row text-center">
-          <div class="col-sm-12 col-md-4">
-            <div class="card shadow p-5 mb-3">
-              <a
-                class="btn btn-fix"
-                href="#"
-                data-toggle="modal"
-                data-target="#userList"
-              >
-                <h2 class="card-title">Users</h2>
-                <p class="card-text">
-                  View or modify all users here
-                </p>
-              </a>
+      <div class="container my-3">
+        <div class="row my-3">
+          <!-- Notifications Area -->
+          <div class="col-sm-12 my-1" id="notificationArea"></div>
+          <!-- Game Info -->
+          <div class="col-sm-12 my-1">
+            <div class="card">
+              <div class="card-body p-2">
+                <div class="row">
+                  <div class="col-md-8 d-flex align-items-center my-1">
+                    <h5 class="m-0 ml-2">Game Status: <span id="gameStatus" class="text-danger">Stopped</span></h5>
+                  </div>
+                  <div class="col-md-2 my-1">
+                    <button class="btn btn-primary btn-block start">Start Game</button>
+                  </div>
+                  <div class="col-md-2 my-1">
+                    <button class="btn btn-danger btn-block reset">Reset Game</button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-4">
-            <div class="card shadow p-5 mb-3">
-              <a
-                class="btn btn-fix"
-                href="#"
-                data-toggle="modal"
-                data-target="#challengeList"
-              >
-                <h2 class="card-title">Challenges</h2>
-                <p class="card-text">
-                  Add or Remove Challenge from here
-                </p>
-              </a>
+          <!-- Users -->
+          <div class="col-sm-12 col-md-12 my-3">
+            <div class="card shadow">
+              <div class="card-header bg-primary p-1">
+                <h5 class="text-center text-white">Users</h5>
+              </div>
+              <div class="card-body">
+                <div class="overflow-auto" style="max-height:300px">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">EID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody id="userListArea"></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card-footer bg-white">
+                <div class="row mb-1">
+                  <div class="col-sm-12 col-md-5 mt-2">
+                    <input type="text" placeholder="Enter EID" class="form-control" id="newUserEid" />
+                  </div>
+                  <div class="col-sm-12 col-md-5 mt-2">
+                    <input type="text" placeholder="Enter Name" class="form-control" id="newUserName" />
+                  </div>
+                  <div class="col-sm-12 col-md-2 mt-2">
+                    <button type="button" class="btn btn-primary mx-auto user btn-block">
+                      Add New User
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="col-sm-12 col-md-4">
-            <div class="card shadow p-5 mb-3">
-              <a
-                id="seeGiftButton"
-                class="btn btn-fix"
-                href="#"
-                data-toggle="modal"
-                data-target="#giftListModal"
-              >
-                <h2 class="card-title">Gifts</h2>
-                <p class="card-text">
-                  See gifts
-                </p>
-              </a>
+          <!-- Challenges -->
+          <div class="col-sm-12 col-md-6 mt-2">
+            <div class="card shadow">
+              <div class="card-header bg-danger p-1">
+                <h5 class="text-center text-white">Challenges</h5>
+              </div>
+              <div class="card-body">
+                <ul id="challengeListArea" class="list-group"></ul>
+              </div>
+              <div class="card-footer bg-white">
+                <div class="row">
+                  <div class="col-sm-12 col-md-8 my-1">
+                    <input type="text" placeholder="Enter Challenge" class="form-control" id="newChallenge"/>
+                  </div>
+                  <div class="col-sm-12 col-md-4 my-1">
+                    <button type="button" class="btn btn-danger mx-auto add btn-block">
+                      Add Challenge
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="card shadow p-5 mb-3 text-center">
-          <a href="#" class="btn btn-fix start"><h1>Start Game</h1></a>
-        </div>
-        <div class="card shadow p-5 mb-3 text-center">
-          <a href="#" class="btn btn-fix reset"><h1>Reset Game</h1></a>
+          <!-- Gifts -->
+          <div class="col-sm-12 col-md-6 mt-2">
+            <div class="card shadow">
+              <div class="card-header bg-success p-1">
+                <h5 class="text-center text-white">Gifts</h5>
+              </div>
+              <div class="card-body">
+                <div class="overflow-auto" style="max-height:200px">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Gift</th>
+                        <th scope="col">Original Owner</th>
+                        <th scope="col">Current Owner</th>
+                        <th scope="col">Steal Count</th>
+                      </tr>
+                    </thead>
+                    <tbody id="giftListModalArea"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
-    <!-- User List Modal -->
-    <div
-      class="modal fade"
-      id="userList"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="userListLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1000px">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="userListLabel">Online Users</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="overflow-auto" style="height:50vh">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">EID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Status</th>
-                  </tr>
-                </thead>
-                <tbody id="userListArea"></tbody>
-              </table>
-            </div>
-
-            <div class="row mt-3">
-              <div class="col">
-                <input
-                  type="text"
-                  placeholder="Enter new joiner eid"
-                  class="form-control"
-                  id="newUserEid"
-                  autofocus
-                />
-              </div>
-              <div class="col">
-                <input
-                  type="text"
-                  placeholder="Enter new joiner name"
-                  class="form-control"
-                  id="newUserName"
-                  autofocus
-                />
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary mx-auto user">
-              Add New User
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Challenge List Modal -->
-    <div
-      class="modal fade"
-      id="challengeList"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="challengeListLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="challengeListLabel">Challenge List</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <ul id="challengeListArea" class="list-group"></ul>
-            <br />
-            <input
-              type="text"
-              placeholder="Enter new challenge"
-              class="form-control"
-              id="newChallenge"
-              autofocus
-            />
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger mx-auto add">
-              Add Challenge
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Gift List Modal -->
-    <div
-      class="modal fade"
-      id="giftListModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="giftListModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:1000px">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="giftListModalLabel">Gift List</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <div class="overflow-auto" style="height:50vh">
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Gift</th>
-                    <th scope="col">Original Owner</th>
-                    <th scope="col">Current Owner</th>
-                    <th scope="col">Steal Count</th>
-                  </tr>
-                </thead>
-                <tbody id="giftListModalArea"></tbody>
-              </table>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-primary mx-auto" data-dismiss="modal">
-              OKAY
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
     <!-- Game Start Modal -->
     <div
       class="modal fade"
