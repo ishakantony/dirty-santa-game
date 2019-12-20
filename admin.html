@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>ACN Christmas Games 2019</title>
+    <title>Dashboard - Dirty Santa Game</title>
 
     <link
       rel="stylesheet"
@@ -50,22 +50,29 @@
                     <h5 class="m-0 ml-2">Game Status: <span id="gameStatus" class="text-danger">Stopped</span></h5>
                   </div>
                   <div class="col-md-2 my-1">
-                    <button class="btn btn-primary btn-block start">Start Game</button>
+                    <button id="startGameButton" class="btn btn-primary btn-block start">Start Game</button>
                   </div>
                   <div class="col-md-2 my-1">
-                    <button class="btn btn-danger btn-block reset">Reset Game</button>
+                    <button id="resetGameButton" class="btn btn-danger btn-block reset">Reset Game</button>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <!-- Users -->
-          <div class="col-sm-12 col-md-12 my-3">
+          <div id="usersSection" class="col-sm-12 col-md-12 my-3">
             <div class="card shadow">
               <div class="card-header bg-primary p-1">
                 <h5 class="text-center text-white">Users</h5>
               </div>
-              <div class="card-body">
+              <div class="card-body position-relative">
+                <div class="loader justify-content-center align-items-center">
+                  <div class="w-100 d-flex justify-content-center">
+                    <div class="spinner-border text-light" role="status" style="width: 5rem; height: 5rem">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
                 <div class="overflow-auto" style="max-height:300px">
                   <table class="table">
                     <thead>
@@ -98,12 +105,19 @@
             </div>
           </div>
           <!-- Challenges -->
-          <div class="col-sm-12 col-md-6 mt-2">
+          <div id="challengesSection" class="col-sm-12 col-md-6 mt-2">
             <div class="card shadow">
               <div class="card-header bg-danger p-1">
                 <h5 class="text-center text-white">Challenges</h5>
               </div>
-              <div class="card-body">
+              <div class="card-body position-relative">
+                <div class="loader justify-content-center align-items-center">
+                  <div class="w-100 d-flex justify-content-center">
+                    <div class="spinner-border text-light" role="status" style="width: 5rem; height: 5rem">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
                 <ul id="challengeListArea" class="list-group"></ul>
               </div>
               <div class="card-footer bg-white">
@@ -121,12 +135,19 @@
             </div>
           </div>
           <!-- Gifts -->
-          <div class="col-sm-12 col-md-6 mt-2">
+          <div id="giftsSection" class="col-sm-12 col-md-6 mt-2">
             <div class="card shadow">
               <div class="card-header bg-success p-1">
                 <h5 class="text-center text-white">Gifts</h5>
               </div>
-              <div class="card-body">
+              <div class="card-body position-relative">
+                <div class="loader justify-content-center align-items-center">
+                  <div class="w-100 d-flex justify-content-center">
+                    <div class="spinner-border text-light" role="status" style="width: 5rem; height: 5rem">
+                      <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>
+                </div>
                 <div class="overflow-auto" style="max-height:200px">
                   <table class="table">
                     <thead>

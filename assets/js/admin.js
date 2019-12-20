@@ -1,24 +1,20 @@
 var $userListArea = $('#userListArea');
-var $userListModal = $('#userList');
 var $newUserEidInput = $('#newUserEid');
 var $newUserNameInput = $('#newUserName');
-var $userDeleteButton;
 var $challengeAddButton;
 var $challengeDeleteButton;
 var $newChallengeInput = $('#newChallenge');
 var $challengeListModal = $('#challengeList');
 var $challengeListArea = $('#challengeListArea');
-var $startGameButton = $('a.start');
-var $resetGameButton = $('a.reset');
-var $gameStartModal = $('#gameStartModal');
-var $gameStartModalArea = $('#gameStartModalArea');
-var $refreshBtn = $('button.refresh');
-var $seeGiftButton = $('#seeGiftButton');
-var $giftListModal = $('#giftListModal');
+var $startGameButton = $('#startGameButton');
+var $resetGameButton = $('#resetGameButton');
 var $giftListModalArea = $('#giftListModalArea');
 var $notificationArea = $('#notificationArea');
 var $gameStatus = $('#gameStatus');
 var $loading = $('#loading');
+var $usersSection = $('#usersSection');
+var $challengesSection = $('#challengesSection');
+var $giftsSection = $('#giftsSection');
 // SOCKETS
 var socket = io.connect();
 
@@ -32,11 +28,20 @@ var endSpinner = function() {
   $loading.addClass('d-none');
 };
 
+var startLoader = function($el) {
+  $el.find('.loader').addClass('is-loading');
+}
+
+var stopLoader = function($el) {
+  $el.find('.loader').removeClass('is-loading');
+}
+
 var refreshGiftList = () => {
   var resetReq = $.ajax({
     url: '/api/gift/all',
     method: 'GET',
-    dataType: 'json'
+    dataType: 'json',
+    beforeSend: startLoader($giftsSection)
   });
 
   resetReq.done(data => {
@@ -63,14 +68,16 @@ var refreshGiftList = () => {
     }
 
     $giftListModalArea.html(html);
+    stopLoader($giftsSection);
   });
 };
 
-var refreshUserList = function() {
+var refreshUserList = () => {
   var userListRequest = $.ajax({
     url: '/api/user',
     method: 'GET',
-    dataType: 'json'
+    dataType: 'json',
+    beforeSend: startLoader($usersSection)
   });
 
   userListRequest.done(data => {
@@ -95,65 +102,9 @@ var refreshUserList = function() {
       }</td><td>${status}</td></tr>`;
     }
     $userListArea.html(html);
+    stopLoader($usersSection);
   });
 };
-$userListModal.on('click', 'button.user', e => {
-  if ($newUserEidInput.val() && $newUserNameInput.val()) {
-    var request = $.ajax({
-      url: '/api/user',
-      method: 'POST',
-      dataType: 'json',
-      data: {
-        EID: $newUserEidInput.val(),
-        Name: $newUserNameInput.val()
-      }
-    });
-
-    request.done(data => {
-      var userListRequest = $.ajax({
-        url: '/api/user',
-        method: 'GET',
-        dataType: 'json'
-      });
-      userListRequest.done(res => {
-        var html = '';
-        var users = res.users;
-        for (const [i, user] of users.entries()) {
-          var status;
-          if (user.loggedIn) {
-            status = '<span class="text-success">online</span>';
-          } else {
-            status = '<span class="text-danger">offline</span>';
-          }
-          html += `<tr><td>${i + 1}</td><td>${user.EID}</td><td>${
-            user.Name
-          }</td><td>${status}</td></tr>`;
-        }
-        $userListArea.html(html);
-      });
-
-      $newUserEidInput.val('');
-      $newUserNameInput.val('');
-    });
-
-    request.fail((jqXHR, textStatus) => {
-      alert('Request failed: ' + textStatus);
-    });
-  } else {
-    alert('Please enter a new user eid and name.');
-  }
-});
-
-$userListModal.on('click', 'button.remove-user', function() {
-  $userDeleteButton = $(this);
-  var nameToDelete = $userDeleteButton
-    .parent()
-    .children('div')
-    .text();
-  console.log(nameToDelete);
-  socket.emit('kicked out', nameToDelete);
-  $userDeleteButton.parent().remove();
-});
 
 var req = $.ajax({
   url: '/api/challenge',
@@ -253,6 +204,16 @@ $startGameButton.on('click', e => {
       $gameStatus.addClass('text-success');
       $gameStatus.html('Started');
     } else {
+      var html = `
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <strong>${data.message}</strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+      `;
+      $notificationArea.html(html);
+
       $gameStatus.addClass('text-danger');
       $gameStatus.removeClass('text-success');
       $gameStatus.html('Stopped');
@@ -289,20 +250,11 @@ $resetGameButton.on('click', e => {
   });
 });
 
-$refreshBtn.on('click', e => {
-  refreshUserList();
-});
-
-$seeGiftButton.on('click', e => {
-  e.preventDefault();
-
-  refreshGiftList();
-});
-
 $(document).ready(function() {
   refreshUserList();
+  refreshGiftList();
 
-  setInterval(refreshGiftList, 2000);
+  setInterval(refreshGiftList, 7000);
 
-  setInterval(refreshUserList, 2000);
+  setInterval(refreshUserList, 15000);
 });

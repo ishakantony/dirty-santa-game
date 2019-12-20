@@ -4,6 +4,7 @@ var socketIo = require('socket.io');
 var path = require('path');
 var PORT = process.env.PORT || 3000;
 var bodyParser = require('body-parser');
+var favicon = require('serve-favicon');
 var app = express();
 
 var server = http.createServer(app);
@@ -38,6 +39,7 @@ server.listen(PORT);
 console.log(`Server started on port ${PORT}`);
 
 // EXPRESS APIS
+app.use(favicon(__dirname + '/assets/img/favicon.ico'));
 app.use(express.static(path.join(__dirname, 'assets')));
 app.use(bodyParser.urlencoded({ express: false }));
 app.use(bodyParser.json());
@@ -62,9 +64,13 @@ app.get('/api/challenge/random', (req, res) => {
 });
 
 app.get('/api/challenge', (req, res) => {
-  res.json({
+  // res.json({
+  //   challenge: challenges
+  // });
+  // TO ADD INTENTIONAL LATENCY
+  setTimeout(() =>  res.json({
     challenge: challenges
-  });
+  }), 2000);
 });
 
 app.post('/api/challenge', (req, res) => {
@@ -91,13 +97,15 @@ app.get('/api/gift', (req, res) => {
     return gift.stealCount < 3;
   });
 
-  res.json(items);
+  // res.json(items);
   // TO ADD INTENTIONAL LATENCY
-  // setTimeout(() =>  res.json(items), 2000);
+  setTimeout(() =>  res.json(items), 2000);
 });
 
 app.get('/api/gift/all', (req, res) => {
-  res.json(gifts);
+  // res.json(gifts);
+  // TO ADD INTENTIONAL LATENCY
+  setTimeout(() =>  res.json(gifts), 2000);
 });
 
 app.post('/api/login', (req, res) => {
@@ -141,9 +149,13 @@ app.post('/api/login', (req, res) => {
 });
 
 app.get('/api/user', (req, res) => {
-  res.json({
+  // res.json({
+  //   users: users
+  // });
+  // TO ADD INTENTIONAL LATENCY
+  setTimeout(() =>  res.json({
     users: users
-  });
+  }), 2000);
 });
 
 app.post('/api/user', (req, res) => {
@@ -297,7 +309,6 @@ io.sockets.on('connection', socket => {
     turns.splice(turns.indexOf(data), 1);
 
     if (turns.length === 0 && unlimitedTurns.length === 0) {
-      gameStarted = false;
       io.sockets.emit('next turn', {
         message: 'No more user'
       });
