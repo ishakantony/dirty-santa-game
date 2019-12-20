@@ -97,7 +97,7 @@ var refreshUserList = () => {
       } else {
         status = '<span class="text-danger">offline</span>';
       }
-      html += `<tr><td>${i + 1}</td><td>${user.EID}</td><td>${
+      html += `<tr><td>${i + 1}</td><td>${user.Username}</td><td>${
         user.Name
       }</td><td>${status}</td></tr>`;
     }

@@ -11,28 +11,30 @@ var server = http.createServer(app);
 
 var io = socketIo.listen(server);
 
-var users = [];
-var connections = [];
-var typingUsers = [];
-var gifts = [];
-var turns = [];
-var unlimitedTurns = [];
-var challenges = ['Direction Game', 'Click Game'];
-var gameStarted = false;
+var USERS = [];
+var CONNECTIONS = [];
+var TYPING_USERS = [];
+var GIFTS = [];
+var TURNS = [];
+var UNLIMITED_TURNS = [];
+var CHALLENGES = ['Direction Game', 'Click Game'];
+var GAME_INFO = {
+  started: false
+};
 
 ('use strict');
 var excelToJson = require('convert-excel-to-json');
 
-users = excelToJson({
+USERS = excelToJson({
   sourceFile: 'nameList.xlsx',
   header: { rows: 1 },
   columnToKey: {
-    A: 'EID',
+    A: 'Username',
     B: 'Name'
   }
 }).nameList;
 
-console.log(connections);
+console.log(CONNECTIONS);
 // convert nameList.xlsx to json END
 
 server.listen(PORT);
@@ -56,7 +58,7 @@ app.get('/admin', (req, res) => {
 });
 
 app.get('/api/challenge/random', (req, res) => {
-  var challenge = challenges[Math.floor(Math.random() * challenges.length)];
+  var challenge = CHALLENGES[Math.floor(Math.random() * CHALLENGES.length)];
 
   res.json({
     challenge: challenge
@@ -69,14 +71,14 @@ app.get('/api/challenge', (req, res) => {
   // });
   // TO ADD INTENTIONAL LATENCY
   setTimeout(() =>  res.json({
-    challenge: challenges
+    challenge: CHALLENGES
   }), 2000);
 });
 
 app.post('/api/challenge', (req, res) => {
   var newChallenge = req.body.challenge;
   console.log(newChallenge);
-  challenges.push(newChallenge);
+  CHALLENGES.push(newChallenge);
   res.json({
     result: 'New Challenge Added : ' + newChallenge
   });
@@ -85,7 +87,7 @@ app.post('/api/challenge', (req, res) => {
 app.delete('/api/challenge', (req, res) => {
   var delChallenge = req.body.challenge;
   console.log(`Removing challenge: ${delChallenge}...`);
-  challenges.splice(challenges.indexOf(delChallenge), 1);
+  CHALLENGES.splice(CHALLENGES.indexOf(delChallenge), 1);
   res.json({
     result: 'Challenge Removed : ' + delChallenge
   });
@@ -93,7 +95,7 @@ app.delete('/api/challenge', (req, res) => {
 });
 
 app.get('/api/gift', (req, res) => {
-  const items = gifts.filter(gift => {
+  const items = GIFTS.filter(gift => {
     return gift.stealCount < 3;
   });
 
@@ -105,14 +107,14 @@ app.get('/api/gift', (req, res) => {
 app.get('/api/gift/all', (req, res) => {
   // res.json(gifts);
   // TO ADD INTENTIONAL LATENCY
-  setTimeout(() =>  res.json(gifts), 2000);
+  setTimeout(() =>  res.json(GIFTS), 2000);
 });
 
 app.post('/api/login', (req, res) => {
   const username = req.body.username;
   const socketId = req.body.socketId;
-  const user = users.find(user => {
-    return username.toLowerCase() === user.EID.toLowerCase();
+  const user = USERS.find(user => {
+    return username.toLowerCase() === user.Username.toLowerCase();
   });
 
   if (user === undefined) {
@@ -130,19 +132,19 @@ app.post('/api/login', (req, res) => {
   } else {
     //users.push(user);
 
-    const userIndex = users.indexOf(user);
+    const userIndex = USERS.indexOf(user);
 
     user.loggedIn = true;
     user.socketId = socketId;
-    users[userIndex] = user;
+    USERS[userIndex] = user;
 
-    turns.push(socketId);
-    io.sockets.emit('user list updated', users);
+    TURNS.push(socketId);
+    io.sockets.emit('user list updated', USERS);
     console.log('User logged in:', user);
     res.json({
       loggedIn: true,
       message: 'Login success',
-      username: user.EID,
+      username: user.Username,
       name: user.Name
     });
   }
@@ -154,22 +156,22 @@ app.get('/api/user', (req, res) => {
   // });
   // TO ADD INTENTIONAL LATENCY
   setTimeout(() =>  res.json({
-    users: users
+    users: USERS
   }), 2000);
 });
 
 app.post('/api/user', (req, res) => {
-  var newEid = req.body.EID;
+  var newUsername = req.body.Username;
   var newName = req.body.Name;
-  users.push({ EID: newEid, Name: newName });
-  console.log(users);
+  USERS.push({ Username: newUsername, Name: newName });
+  console.log(USERS);
   res.json({
     result: 'New User Added' + newName
   });
 });
 
 app.post('/api/game/stop', (req, res) => {
-  if(!gameStarted) {
+  if(!GAME_INFO.started) {
     res.json({
       stopped: false,
       message: 'Error on stopping game as game is not started yet'
@@ -177,17 +179,17 @@ app.post('/api/game/stop', (req, res) => {
     return;
   }
 
-  gameStarted = false;
-  unlimitedTurns = [];
-  turns = [];
-  gifts = [];
-  users.forEach(user => {
+  GAME_INFO.started = false;
+  UNLIMITED_TURNS = [];
+  TURNS = [];
+  GIFTS = [];
+  USERS.forEach(user => {
     if (user.loggedIn) {
-      turns.push(user.socketId);
+      TURNS.push(user.socketId);
     }
   });
 
-  console.log(gameStarted, unlimitedTurns, turns, gifts);
+  console.log(GAME_INFO.started, UNLIMITED_TURNS, TURNS, GIFTS);
   res.json({
     stopped: true,
     message: 'Game has been reset'
@@ -196,29 +198,29 @@ app.post('/api/game/stop', (req, res) => {
 });
 
 app.get('/api/game/start', (req, res) => {
-  if (gameStarted) {
+  if (GAME_INFO.started) {
     console.log('Failed to start game, game already started');
     res.json({
       started: false,
       message: 'Game is in progress'
     });
-  } else if (turns.length === 0 && unlimitedTurns.length === 0) {
+  } else if (TURNS.length === 0 && UNLIMITED_TURNS.length === 0) {
     console.log('Failed to start game, not enough players');
     res.json({
       started: false,
       message: 'Failed to start game, not enough players'
     });
   } else {
-    var nextSocketId = turns[Math.floor(Math.random() * turns.length)];
+    var nextSocketId = TURNS[Math.floor(Math.random() * TURNS.length)];
 
-    var userNext = users.find(user => user.socketId === nextSocketId);
+    var userNext = USERS.find(user => user.socketId === nextSocketId);
 
-    gameStarted = true;
-    console.log(`Game started with ${turns.length} players`);
+    GAME_INFO.started = true;
+    console.log(`Game started with ${TURNS.length} players`);
     io.sockets.emit('next turn', userNext);
     res.json({
       started: true,
-      message: `Game started with ${turns.length} players`
+      message: `Game started with ${TURNS.length} players`
     });
   }
 });
@@ -227,8 +229,8 @@ app.get('/api/game/start', (req, res) => {
 // SOCKETS
 io.sockets.on('connection', socket => {
   socket.loggedIn = false;
-  connections.push(socket);
-  console.log(`Connected: ${connections.length} sockets connected`);
+  CONNECTIONS.push(socket);
+  console.log(`Connected: ${CONNECTIONS.length} sockets connected`);
 
   socket.emit('handshake');
   socket.on('handshake success', ({ username, name }) => {
@@ -236,21 +238,21 @@ io.sockets.on('connection', socket => {
     socket.name = name;
     socket.loggedIn = true;
 
-    const user = users.find(user => user.EID === username);
-    const userIndex = users.indexOf(user);
+    const user = USERS.find(user => user.Username === username);
+    const userIndex = USERS.indexOf(user);
 
     user.loggedIn = true;
     user.socketId = socket.id;
-    users[userIndex] = user;
+    USERS[userIndex] = user;
 
-    turns.push(socket.id);
+    TURNS.push(socket.id);
 
-    const gift = gifts.find(gift => gift.ownerUserName === socket.username);
+    const gift = GIFTS.find(gift => gift.ownerUserName === socket.username);
 
     if (gift !== undefined) {
-      const giftIndex = gifts.indexOf(gift);
+      const giftIndex = GIFTS.indexOf(gift);
       gift.ownerId = socket.id;
-      gifts[giftIndex] = gift;
+      GIFTS[giftIndex] = gift;
       console.log(gift);
     }
 
@@ -269,12 +271,12 @@ io.sockets.on('connection', socket => {
     socket.name = name;
     socket.loggedIn = true;
 
-    const gift = gifts.find(gift => gift.ownerUserName === socket.username);
+    const gift = GIFTS.find(gift => gift.ownerUserName === socket.username);
 
     if (gift !== undefined) {
-      const giftIndex = gifts.indexOf(gift);
+      const giftIndex = GIFTS.indexOf(gift);
       gift.ownerId = socket.id;
-      gifts[giftIndex] = gift;
+      GIFTS[giftIndex] = gift;
       console.log(gift);
     }
 
@@ -292,37 +294,37 @@ io.sockets.on('connection', socket => {
   socket.on('disconnect', data => {
     if (socket.loggedIn) {
       socket.loggedIn = false;
-      turns.splice(turns.indexOf(socket.id), 1);
-      users[
-        users.findIndex(user => user.socketId === socket.id)
+      TURNS.splice(TURNS.indexOf(socket.id), 1);
+      USERS[
+        USERS.findIndex(user => user.socketId === socket.id)
       ].loggedIn = false;
       io.sockets.emit('user disconnected', socket.name);
     }
-    typingUsers.splice(typingUsers.indexOf(socket.name), 1);
-    connections.splice(connections.indexOf(socket), 1);
-    console.log(`Disconnected: ${connections.length} sockets connected`);
+    TYPING_USERS.splice(TYPING_USERS.indexOf(socket.name), 1);
+    CONNECTIONS.splice(CONNECTIONS.indexOf(socket), 1);
+    console.log(`Disconnected: ${CONNECTIONS.length} sockets connected`);
 
-    io.sockets.emit('someone is typing', typingUsers);
+    io.sockets.emit('someone is typing', TYPING_USERS);
   });
 
   socket.on('end turn', data => {
-    turns.splice(turns.indexOf(data), 1);
+    TURNS.splice(TURNS.indexOf(data), 1);
 
-    if (turns.length === 0 && unlimitedTurns.length === 0) {
+    if (TURNS.length === 0 && UNLIMITED_TURNS.length === 0) {
       io.sockets.emit('next turn', {
         message: 'No more user'
       });
     } else {
       var nextSocketId;
 
-      if (turns.length === 0) {
+      if (TURNS.length === 0) {
         nextSocketId =
-          unlimitedTurns[Math.floor(Math.random() * unlimitedTurns.length)];
+          UNLIMITED_TURNS[Math.floor(Math.random() * UNLIMITED_TURNS.length)];
       } else {
-        nextSocketId = turns[Math.floor(Math.random() * turns.length)];
+        nextSocketId = TURNS[Math.floor(Math.random() * TURNS.length)];
       }
 
-      var userNext = users.find(user => user.socketId === nextSocketId);
+      var userNext = USERS.find(user => user.socketId === nextSocketId);
 
       io.sockets.emit('next turn', userNext);
     }
@@ -333,15 +335,15 @@ io.sockets.on('connection', socket => {
   });
 
   socket.on('i am typing', data => {
-    if (typingUsers.indexOf(socket.name) === -1) {
-      typingUsers.push(socket.name);
+    if (TYPING_USERS.indexOf(socket.name) === -1) {
+      TYPING_USERS.push(socket.name);
     }
-    io.sockets.emit('someone is typing', typingUsers);
+    io.sockets.emit('someone is typing', TYPING_USERS);
   });
 
   socket.on('i am not typing', data => {
-    typingUsers.splice(typingUsers.indexOf(socket.name), 1);
-    io.sockets.emit('someone is typing', typingUsers);
+    TYPING_USERS.splice(TYPING_USERS.indexOf(socket.name), 1);
+    io.sockets.emit('someone is typing', TYPING_USERS);
   });
 
   socket.on('i got a gift', data => {
@@ -352,19 +354,19 @@ io.sockets.on('connection', socket => {
     gift.ownerName = socket.name;
     gift.stealCount = 0;
 
-    gifts.push(gift);
+    GIFTS.push(gift);
 
     console.log('New gift registered:', gift);
-    console.log(`Current total gifts: ${gifts.length} items`);
+    console.log(`Current total gifts: ${GIFTS.length} items`);
 
     socket.emit('gift registered', data);
     socket.broadcast.emit('someone got a gift', data);
 
-    if (unlimitedTurns.indexOf(socket.id) > -1) {
-      unlimitedTurns.splice(unlimitedTurns.indexOf(socket.id), 1);
+    if (UNLIMITED_TURNS.indexOf(socket.id) > -1) {
+      UNLIMITED_TURNS.splice(UNLIMITED_TURNS.indexOf(socket.id), 1);
     }
-    console.log('Unlimited Turns Pool:', unlimitedTurns);
-    console.log(`Unlimited Turns Pool: ${unlimitedTurns.length} players`);
+    console.log('Unlimited Turns Pool:', UNLIMITED_TURNS);
+    console.log(`Unlimited Turns Pool: ${UNLIMITED_TURNS.length} players`);
   });
 
   socket.on('i challenge you', data => {
@@ -389,11 +391,11 @@ io.sockets.on('connection', socket => {
 
   socket.on('i have stolen a gift', data => {
     console.log('i have stolen a gift', data);
-    var gift = gifts.find(item => {
+    var gift = GIFTS.find(item => {
       return item.ownerId == data.oldOwnerId;
     });
 
-    gifts.splice(gifts.indexOf(gift), 1);
+    GIFTS.splice(GIFTS.indexOf(gift), 1);
     console.log('Gift removed:', gift);
 
     gift.ownerId = data.newOwnerId;
@@ -401,27 +403,27 @@ io.sockets.on('connection', socket => {
     gift.ownerUserName = data.newOwnerUserName;
     gift.stealCount++;
 
-    gifts.push(gift);
+    GIFTS.push(gift);
     console.log('Gift added:', gift);
-    console.log('Gifts :', gifts);
-    if (unlimitedTurns.indexOf(data.newOwnerId) > -1) {
-      unlimitedTurns.splice(unlimitedTurns.indexOf(data.newOwnerId), 1);
+    console.log('Gifts :', GIFTS);
+    if (UNLIMITED_TURNS.indexOf(data.newOwnerId) > -1) {
+      UNLIMITED_TURNS.splice(UNLIMITED_TURNS.indexOf(data.newOwnerId), 1);
     }
-    if (unlimitedTurns.indexOf(data.enemyOwnerId) > -1) {
-      unlimitedTurns.splice(unlimitedTurns.indexOf(data.enemyOwnerId), 1);
+    if (UNLIMITED_TURNS.indexOf(data.enemyOwnerId) > -1) {
+      UNLIMITED_TURNS.splice(UNLIMITED_TURNS.indexOf(data.enemyOwnerId), 1);
     }
-    unlimitedTurns.push(data.enemyOwnerId);
-    console.log('Unlimited Turns Pool:', unlimitedTurns);
-    console.log(`Unlimited Turns Pool: ${unlimitedTurns.length} players`);
+    UNLIMITED_TURNS.push(data.enemyOwnerId);
+    console.log('Unlimited Turns Pool:', UNLIMITED_TURNS);
+    console.log(`Unlimited Turns Pool: ${UNLIMITED_TURNS.length} players`);
   });
 
   socket.on('kicked out', data => {
     var delName = data;
-    var delUser = users.find(user => {
+    var delUser = USERS.find(user => {
       return user.Name == data;
     });
-    if (users.indexOf(delUser) > -1) {
-      console.log(`Disconnected: ${connections.length} sockets connected`);
+    if (USERS.indexOf(delUser) > -1) {
+      console.log(`Disconnected: ${CONNECTIONS.length} sockets connected`);
       io.sockets.emit('user kicked out', delName);
       console.log('User has been kicked out from the room: ', delName);
     }
