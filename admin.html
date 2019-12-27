@@ -88,19 +88,19 @@
                 </div>
               </div>
               <div class="card-footer bg-white">
-                <div class="row mb-1">
-                  <div class="col-sm-12 col-md-5 mt-2">
-                    <input type="text" placeholder="Enter Username" class="form-control" id="newUserEid" />
+                <form id="addNewUserForm">
+                  <div class="row mb-1">
+                    <div class="col-sm-12 col-md-5 mt-2">
+                      <input type="text" placeholder="Enter Username" class="form-control" id="username" />
+                    </div>
+                    <div class="col-sm-12 col-md-5 mt-2">
+                      <input type="text" placeholder="Enter Name" class="form-control" id="name" />
+                    </div>
+                    <div class="col-sm-12 col-md-2 mt-2">
+                      <input type="submit" class="btn btn-primary mx-auto user btn-block" value="Add New User" />
+                    </div>
                   </div>
-                  <div class="col-sm-12 col-md-5 mt-2">
-                    <input type="text" placeholder="Enter Name" class="form-control" id="newUserName" />
-                  </div>
-                  <div class="col-sm-12 col-md-2 mt-2">
-                    <button type="button" class="btn btn-primary mx-auto user btn-block">
-                      Add New User
-                    </button>
-                  </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>
@@ -121,16 +121,16 @@
                 <ul id="challengeListArea" class="list-group"></ul>
               </div>
               <div class="card-footer bg-white">
-                <div class="row">
-                  <div class="col-sm-12 col-md-8 my-1">
-                    <input type="text" placeholder="Enter Challenge" class="form-control" id="newChallenge"/>
+                <form id="addNewChallengeForm">
+                  <div class="row">
+                    <div class="col-sm-12 col-md-8 my-1">
+                      <input type="text" placeholder="Enter Challenge" class="form-control" id="challenge"/>
+                    </div>
+                    <div class="col-sm-12 col-md-4 my-1">
+                      <input type="submit" class="btn btn-danger mx-auto add btn-block" value="Add Challenge" />
+                    </div>
                   </div>
-                  <div class="col-sm-12 col-md-4 my-1">
-                    <button type="button" class="btn btn-danger mx-auto add btn-block">
-                      Add Challenge
-                    </button>
-                  </div>
-                </div>
+                </form>
               </div>
             </div>
           </div>

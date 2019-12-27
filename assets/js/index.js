@@ -110,7 +110,7 @@ var showWrongUsernameAlert = function() {
 var showWrongEidAlert = function() {
   var html = `
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>Oops!</strong> Kindly enter your employee ID to enter the room.
+            <strong>Oops!</strong> Kindly enter correct username to enter the room. If you don't have a username, please contact <strong>Game Master</strong>.
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -724,22 +724,6 @@ socket.on('user disconnected', data => {
   writeUserLeaving(data);
 });
 
-socket.on('user kicked out', data => {
-  writeUserKickedOut(data);
-  if (socket.username === data) {
-    // Event to show "You have been kicked out by admin"
-    var html = `
-    <h5 class="font-weight-bold text-center text-danger">You have been kicked out by Admin.</h5>
-  `;
-    $turnAnnouncementModalButton.off();
-    $turnAnnouncementModalArea.html(html);
-    $turnAnnouncementModal.modal('show');
-    $turnAnnouncementModalButton.on('click', e => {
-      window.location.reload();
-    });
-  }
-});
-
 socket.on('user list updated', data => {
   var html = '';
 
@@ -939,7 +923,10 @@ socket.on('next turn', data => {
     }
 
     $turnAnnouncementModalArea.html(html);
-    $turnAnnouncementModal.modal('show');
+    $turnAnnouncementModal.modal({
+      backdrop: 'static',
+      keyboard: false
+    });
   }
 });
 
@@ -953,6 +940,23 @@ socket.on('handshake', data => {
 
     socket.emit('handshake success', request);
   }
+});
+
+socket.on('handshake failed', data => {
+  var html = `
+    <h5 class="font-weight-bold text-center text-danger">You have been kicked out from the game!</h5>
+  `;
+
+  $turnAnnouncementModalButton.on('click', e => {
+    e.preventDefault();
+    window.location.reload();
+  });
+
+  $turnAnnouncementModalArea.html(html);
+  $turnAnnouncementModal.modal({
+    backdrop: 'static',
+    keyboard: false
+  });
 });
 
 socket.on('game has been reset', data => {

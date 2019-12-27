@@ -80,7 +80,7 @@ app.post('/api/challenge', (req, res) => {
   console.log(newChallenge);
   CHALLENGES.push(newChallenge);
   res.json({
-    result: 'New Challenge Added : ' + newChallenge
+    result: 'New Challenge Added: <strong>'+ newChallenge +'</strong>'
   });
 });
 
@@ -89,7 +89,7 @@ app.delete('/api/challenge', (req, res) => {
   console.log(`Removing challenge: ${delChallenge}...`);
   CHALLENGES.splice(CHALLENGES.indexOf(delChallenge), 1);
   res.json({
-    result: 'Challenge Removed : ' + delChallenge
+    result: 'Challenge Removed: <strong>'+ delChallenge +'</strong>'
   });
   console.log(`Challenge Removed : ${delChallenge}`);
 });
@@ -161,12 +161,12 @@ app.get('/api/user', (req, res) => {
 });
 
 app.post('/api/user', (req, res) => {
-  var newUsername = req.body.Username;
-  var newName = req.body.Name;
+  var newUsername = req.body.username;
+  var newName = req.body.name;
   USERS.push({ Username: newUsername, Name: newName });
   console.log(USERS);
   res.json({
-    result: 'New User Added' + newName
+    result: 'New User Added: <strong>'+ newName +'</strong>'
   });
 });
 
@@ -239,6 +239,19 @@ io.sockets.on('connection', socket => {
     socket.loggedIn = true;
 
     const user = USERS.find(user => user.Username === username);
+
+    if(user === undefined) {
+      socket.username = null;
+      socket.name = null;
+      socket.loggedIn = false;
+
+      socket.emit('handshake failed');
+      console.log(
+        `Handshake Failed: ID:${socket.id}, USERNAME:${socket.username}, LOGGEDIN:${socket.loggedIn}, USER IS NOT REGISTERED`
+      );
+      return;
+    }
+
     const userIndex = USERS.indexOf(user);
 
     user.loggedIn = true;
