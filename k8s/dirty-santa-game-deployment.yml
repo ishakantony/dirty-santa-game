@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dirty-santa-game
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dirty-santa-game
+  template:
+    metadata:
+      labels:
+        app: dirty-santa-game
+    spec:
+      containers:
+        - name: dirty-santa-game
+          args: ["npm", "run", "dev"]
+          image: ishakantony/dirty-santa-game
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dirty-santa-game
+spec:
+  selector:
+    app: dirty-santa-game
+  ports:
+    - name: dirty-santa-game
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
